@@ -595,21 +595,12 @@ namespace loguru
 	#endif
 	}
 
-	void init(int& argc, char* argv[], const Options& options)
+	void parse_arguments(int& argc, char* argv[], const Options& options)
 	{
 		CHECK_GT_F(argc,       0,       "Expected proper argc/argv");
 		CHECK_EQ_F(argv[argc], nullptr, "Expected proper argc/argv");
 
 		s_argv0_filename = filename(argv[0]);
-
-		#ifdef _WIN32
-			#define getcwd _getcwd
-		#endif
-
-		if (!getcwd(s_current_dir, sizeof(s_current_dir))) {
-			const auto error_text = errno_as_text();
-			LOG_F(WARNING, "Failed to get current working directory: " LOGURU_FMT(s) "", error_text.c_str());
-		}
 
 		s_arguments = "";
 		for (int i = 0; i < argc; ++i) {
@@ -621,6 +612,19 @@ namespace loguru
 
 		if (options.verbosity_flag) {
 			parse_args(argc, argv, options.verbosity_flag);
+		}
+		VLOG_F(g_internal_verbosity, "arguments: " LOGURU_FMT(s) "", s_arguments.c_str());
+	}
+
+	void init(const Options& options)
+	{
+		#ifdef _WIN32
+			#define getcwd _getcwd
+		#endif
+
+		if (!getcwd(s_current_dir, sizeof(s_current_dir))) {
+			const auto error_text = errno_as_text();
+			LOG_F(WARNING, "Failed to get current working directory: " LOGURU_FMT(s) "", error_text.c_str());
 		}
 
 		if (const auto main_thread_name = options.main_thread_name) {
@@ -656,7 +660,6 @@ namespace loguru
 			}
 			fflush(stderr);
 		}
-		VLOG_F(g_internal_verbosity, "arguments: " LOGURU_FMT(s) "", s_arguments.c_str());
 		if (strlen(s_current_dir) != 0)
 		{
 			VLOG_F(g_internal_verbosity, "Current dir: " LOGURU_FMT(s) "", s_current_dir);

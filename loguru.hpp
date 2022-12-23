@@ -498,7 +498,10 @@ namespace loguru
 		You can you something other than the -v flag by setting the verbosity_flag option.
 	*/
 	LOGURU_EXPORT
-	void init(int& argc, char* argv[], const Options& options = {});
+	void init(const Options& options = {});
+
+	LOGURU_EXPORT
+	void parse_arguments(int& argc, char* argv[], const Options& options = {});
 
 	// Will call remove_all_callbacks(). After calling this, logging will still go to stderr.
 	// You generally don't need to call this.

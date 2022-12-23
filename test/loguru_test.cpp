@@ -127,7 +127,8 @@ int always_increasing() { static int x = 0; return x++; }
 
 int main_test(int argc, char* argv[])
 {
-	loguru::init(argc, argv);
+	loguru::init();
+	loguru::parse_arguments(argc, argv);
 	LOG_SCOPE_FUNCTION(INFO);
 	LOG_F(INFO, "Doing some stuff...");
 	for (int i=0; i<2; ++i) {
@@ -332,7 +333,7 @@ int main(int argc, char* argv[])
 		return main_test(argc, argv);
 	}
 
-	loguru::init(argc, argv);
+	loguru::init();
 
 	// auto verbose_type_name = loguru::demangle(typeid(std::ofstream).name());
 	// loguru::add_stack_cleanup(verbose_type_name.c_str(), "std::ofstream");
